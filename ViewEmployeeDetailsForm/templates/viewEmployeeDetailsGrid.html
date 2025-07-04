@@ -5,32 +5,41 @@
 
   <!-- Success Message -->
   <div class="alert alert-success" ng-show="successMessage">
-    {{ successMessage }}
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
   </div>
 
   <!-- Error Message -->
   <div class="alert alert-danger" ng-show="errorMessageFromServer">
-    {{ errorMessageFromServer }}
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessageFromServer }}
   </div>
 
   <!-- Action Buttons -->
   <div class="d-flex gap-2 mb-3">
-    <button class="btn btn-success" ng-click="addNewEmployeeRecord()">
-      <i class="fas fa-plus"></i> Add
+    <button class="btn btn-success" ng-click="addNewEmployeeRecord()" ng-disabled="processing">
+      <i class="fas fa-plus"></i> Add Employee
     </button>
     <button class="btn btn-warning" ng-click="updateSelectedEmployeeRecord()"
-      ng-disabled="!selectedEmployeeRecord">
-      <i class="fas fa-edit"></i> Update
+      ng-disabled="!selectedEmployeeRecord || processing">
+      <i class="fas fa-edit"></i> Update Employee
     </button>
     <button class="btn btn-danger" ng-click="deleteSelectedEmployeeRecord()"
-      ng-disabled="!selectedEmployeeRecord">
-      <i class="fas fa-trash"></i> Delete
+      ng-disabled="!selectedEmployeeRecord || processing">
+      <i class="fas fa-trash"></i> Delete Employee
     </button>
+  </div>
+
+  <!-- Selection Info -->
+  <div class="mb-3" ng-show="selectedEmployeeRecord">
+    <small class="text-muted">
+      <i class="fas fa-info-circle"></i> 
+      Selected: {{ selectedEmployeeRecord.employee_FirstName }} {{ selectedEmployeeRecord.employee_LastName }} 
+      (ID: {{ selectedEmployeeRecord.employeeID }})
+    </small>
   </div>
 
   <!-- Loading indicator -->
   <div class="text-center" ng-show="loading">
-    <div class="spinner-border" role="status">
+    <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
     <p class="mt-2">Loading employee data...</p>
@@ -44,7 +53,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add New Employee</h5>
+          <h5 class="modal-title"><i class="fas fa-plus"></i> Add New Employee</h5>
           <button type="button" class="btn-close" ng-click="closeAddModal()"></button>
         </div>
         <div class="modal-body">
@@ -52,11 +61,13 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label">First Name *</label>
-                <input type="text" class="form-control" ng-model="employeeForm.employee_FirstName" required>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_FirstName" 
+                       placeholder="Enter first name" required maxlength="50">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Last Name *</label>
-                <input type="text" class="form-control" ng-model="employeeForm.employee_LastName" required>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_LastName" 
+                       placeholder="Enter last name" required maxlength="50">
               </div>
             </div>
             <div class="row">
@@ -79,24 +90,33 @@
                   <option value="Finance">Finance</option>
                   <option value="Marketing">Marketing</option>
                   <option value="Operations">Operations</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Trainee">Trainee</option>
+                  <option value="Management">Management</option>
                 </select>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Salary *</label>
-                <input type="number" class="form-control" ng-model="employeeForm.employee_Salary" min="0" required>
+                <input type="number" class="form-control" ng-model="employeeForm.employee_Salary" 
+                       placeholder="Enter salary" min="0" step="0.01" required>
               </div>
             </div>
             <div class="mb-3">
               <div class="form-check">
-                <input type="checkbox" class="form-check-input" ng-model="employeeForm.employee_InActive">
-                <label class="form-check-label">Inactive</label>
+                <input type="checkbox" class="form-check-input" id="addInactive" ng-model="employeeForm.employee_InActive">
+                <label class="form-check-label" for="addInactive">Mark as Inactive</label>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" ng-click="closeAddModal()">Cancel</button>
-          <button type="button" class="btn btn-success" ng-click="saveNewEmployee()">Save</button>
+          <button type="button" class="btn btn-secondary" ng-click="closeAddModal()" ng-disabled="processing">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-success" ng-click="saveNewEmployee()" ng-disabled="processing">
+            <span ng-show="processing" class="spinner-border spinner-border-sm me-2"></span>
+            <i class="fas fa-save" ng-hide="processing"></i> Save Employee
+          </button>
         </div>
       </div>
     </div>
@@ -107,7 +127,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Update Employee</h5>
+          <h5 class="modal-title"><i class="fas fa-edit"></i> Update Employee</h5>
           <button type="button" class="btn-close" ng-click="closeUpdateModal()"></button>
         </div>
         <div class="modal-body">
@@ -121,11 +141,13 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label">First Name *</label>
-                <input type="text" class="form-control" ng-model="employeeForm.employee_FirstName" required>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_FirstName" 
+                       placeholder="Enter first name" required maxlength="50">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Last Name *</label>
-                <input type="text" class="form-control" ng-model="employeeForm.employee_LastName" required>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_LastName" 
+                       placeholder="Enter last name" required maxlength="50">
               </div>
             </div>
             <div class="row">
@@ -148,24 +170,33 @@
                   <option value="Finance">Finance</option>
                   <option value="Marketing">Marketing</option>
                   <option value="Operations">Operations</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Trainee">Trainee</option>
+                  <option value="Management">Management</option>
                 </select>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Salary *</label>
-                <input type="number" class="form-control" ng-model="employeeForm.employee_Salary" min="0" required>
+                <input type="number" class="form-control" ng-model="employeeForm.employee_Salary" 
+                       placeholder="Enter salary" min="0" step="0.01" required>
               </div>
             </div>
             <div class="mb-3">
               <div class="form-check">
-                <input type="checkbox" class="form-check-input" ng-model="employeeForm.employee_InActive">
-                <label class="form-check-label">Inactive</label>
+                <input type="checkbox" class="form-check-input" id="updateInactive" ng-model="employeeForm.employee_InActive">
+                <label class="form-check-label" for="updateInactive">Mark as Inactive</label>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" ng-click="closeUpdateModal()">Cancel</button>
-          <button type="button" class="btn btn-warning" ng-click="updateEmployee()">Update</button>
+          <button type="button" class="btn btn-secondary" ng-click="closeUpdateModal()" ng-disabled="processing">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-warning" ng-click="updateEmployee()" ng-disabled="processing">
+            <span ng-show="processing" class="spinner-border spinner-border-sm me-2"></span>
+            <i class="fas fa-save" ng-hide="processing"></i> Update Employee
+          </button>
         </div>
       </div>
     </div>
@@ -176,19 +207,28 @@
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Confirm Delete</h5>
+          <h5 class="modal-title"><i class="fas fa-exclamation-triangle text-danger"></i> Confirm Delete</h5>
           <button type="button" class="btn-close" ng-click="closeDeleteModal()"></button>
         </div>
         <div class="modal-body">
           <p>Are you sure you want to delete this employee record?</p>
           <div class="employee-info" ng-if="selectedEmployeeRecord">
             <strong>{{ selectedEmployeeRecord.employee_FirstName }} {{ selectedEmployeeRecord.employee_LastName }}</strong><br>
-            <small class="text-muted">ID: {{ selectedEmployeeRecord.employeeID }}</small>
+            <small class="text-muted">ID: {{ selectedEmployeeRecord.employeeID }}</small><br>
+            <small class="text-muted">Department: {{ selectedEmployeeRecord.employee_Department }}</small>
+          </div>
+          <div class="alert alert-warning mt-3">
+            <small><i class="fas fa-warning"></i> This action cannot be undone!</small>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" ng-click="closeDeleteModal()">Cancel</button>
-          <button type="button" class="btn btn-danger" ng-click="confirmDeleteEmployee()">Delete</button>
+          <button type="button" class="btn btn-secondary" ng-click="closeDeleteModal()" ng-disabled="processing">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-danger" ng-click="confirmDeleteEmployee()" ng-disabled="processing">
+            <span ng-show="processing" class="spinner-border spinner-border-sm me-2"></span>
+            <i class="fas fa-trash" ng-hide="processing"></i> Delete
+          </button>
         </div>
       </div>
     </div>

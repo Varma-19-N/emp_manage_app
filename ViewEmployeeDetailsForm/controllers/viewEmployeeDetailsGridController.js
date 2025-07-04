@@ -9,7 +9,7 @@ angular
   ) {
     console.log("ViewEmployeeDetailsGridController initialized");
 
-    // Holds any error message that comes back from the server
+    // Scope variables
     $scope.errorMessageFromServer = "";
     $scope.successMessage = "";
     $scope.gridOptions = null;
@@ -18,8 +18,9 @@ angular
     $scope.showUpdateModal = false;
     $scope.showDeleteModal = false;
     $scope.loading = true;
+    $scope.processing = false;
     
-    // Form data for add/update operations
+    // Form data for add/update operations - matching database structure
     $scope.employeeForm = {};
     
     let gridInstance = null;
@@ -45,27 +46,35 @@ angular
         const selectedRows = $scope.gridOptions.api.getSelectedRows();
         $scope.selectedEmployeeRecord = selectedRows.length > 0 ? selectedRows[0] : null;
         $scope.$apply();
+        console.log("Selected employee:", $scope.selectedEmployeeRecord);
       }
     };
 
-    // Initialize empty form
+    // Initialize empty form matching database structure
     function initializeEmployeeForm() {
       $scope.employeeForm = {
-        employeeID: '',
+        employeeID: null,
         employee_FirstName: '',
         employee_LastName: '',
         employee_DateofBirth: '',
         employee_DateofJoining: '',
         employee_Department: '',
-        employee_Salary: '',
+        employee_Salary: 0,
         employee_InActive: false
       };
     }
 
     // Populate the grid with employee data
     function initializeGridWithData(employeeData) {
-      // Assign the employee data to grid rows
-      $scope.gridOptions.rowData = employeeData;
+      // Process data to handle boolean conversion for InActive field
+      const processedData = employeeData.map(function(employee) {
+        return {
+          ...employee,
+          employee_InActive: employee.employee_InActive === 1 || employee.employee_InActive === true
+        };
+      });
+
+      $scope.gridOptions.rowData = processedData;
       $scope.loading = false;
 
       // If grid isn't initialized, create it
@@ -74,14 +83,13 @@ angular
       }
       // Otherwise, just update the row data
       else if ($scope.gridOptions.api) {
-        $scope.gridOptions.api.setRowData(employeeData);
+        $scope.gridOptions.api.setRowData(processedData);
       }
 
       // Auto-size columns after a small delay to ensure everything is rendered
       $timeout(() => {
-        const allColumns = $scope.gridOptions.columnDefs.map(col => col.field);
         if ($scope.gridOptions.api) {
-          $scope.gridOptions.api.autoSizeColumns(allColumns, false);
+          $scope.gridOptions.api.sizeColumnsToFit();
         }
       }, 100);
     }
@@ -89,6 +97,8 @@ angular
     // Fetch employee data from backend and initialize the grid
     function fetchDataAndRenderGrid() {
       $scope.loading = true;
+      clearMessages();
+      
       viewEmployeeDataFetchService
         .fetchAllEmployeeDetailsFromBackend()
         .then(function (data) {
@@ -97,8 +107,7 @@ angular
         })
         .catch(function (error) {
           console.error("Error fetching data:", error);
-          $scope.errorMessageFromServer =
-            "Failed to load employee data. Please try again.";
+          $scope.errorMessageFromServer = error.message || "Failed to load employee data. Please try again.";
           $scope.loading = false;
           $scope.$apply();
         });
@@ -108,6 +117,13 @@ angular
     function clearMessages() {
       $scope.errorMessageFromServer = "";
       $scope.successMessage = "";
+    }
+
+    // Format date for input fields (YYYY-MM-DD)
+    function formatDateForInput(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
     }
 
     // Add new employee record
@@ -129,12 +145,11 @@ angular
       $scope.employeeForm = angular.copy($scope.selectedEmployeeRecord);
       
       // Format dates for input fields
-      if ($scope.employeeForm.employee_DateofBirth) {
-        $scope.employeeForm.employee_DateofBirth = new Date($scope.employeeForm.employee_DateofBirth).toISOString().split('T')[0];
-      }
-      if ($scope.employeeForm.employee_DateofJoining) {
-        $scope.employeeForm.employee_DateofJoining = new Date($scope.employeeForm.employee_DateofJoining).toISOString().split('T')[0];
-      }
+      $scope.employeeForm.employee_DateofBirth = formatDateForInput($scope.employeeForm.employee_DateofBirth);
+      $scope.employeeForm.employee_DateofJoining = formatDateForInput($scope.employeeForm.employee_DateofJoining);
+      
+      // Ensure boolean conversion for InActive field
+      $scope.employeeForm.employee_InActive = $scope.employeeForm.employee_InActive === 1 || $scope.employeeForm.employee_InActive === true;
       
       $scope.showUpdateModal = true;
     };
@@ -150,38 +165,52 @@ angular
       $scope.showDeleteModal = true;
     };
 
+    // Validate employee form
+    $scope.validateEmployeeForm = function() {
+      clearMessages();
+      
+      const validation = viewEmployeeDataFetchService.validateEmployeeData($scope.employeeForm);
+      
+      if (!validation.isValid) {
+        $scope.errorMessageFromServer = validation.errors.join(', ');
+        return false;
+      }
+      
+      return true;
+    };
+
     // Save new employee
     $scope.saveNewEmployee = function() {
-      if (!$scope.validateEmployeeForm()) {
+      if (!$scope.validateEmployeeForm() || $scope.processing) {
         return;
       }
 
+      $scope.processing = true;
       const employeeData = angular.copy($scope.employeeForm);
-      employeeData.employee_CreatedBy = 'Current User'; // Replace with actual user
-      employeeData.employee_CreatedOn = new Date().toISOString();
 
       viewEmployeeDataFetchService
         .addEmployeeRecord(employeeData)
         .then(function(response) {
           $scope.successMessage = "Employee added successfully!";
           $scope.showAddModal = false;
+          $scope.processing = false;
           fetchDataAndRenderGrid(); // Refresh grid
         })
         .catch(function(error) {
-          $scope.errorMessageFromServer = "Failed to add employee. Please try again.";
+          $scope.errorMessageFromServer = error.message || "Failed to add employee. Please try again.";
+          $scope.processing = false;
           console.error("Add employee error:", error);
         });
     };
 
     // Update existing employee
     $scope.updateEmployee = function() {
-      if (!$scope.validateEmployeeForm()) {
+      if (!$scope.validateEmployeeForm() || $scope.processing) {
         return;
       }
 
+      $scope.processing = true;
       const employeeData = angular.copy($scope.employeeForm);
-      employeeData.employee_ModifiedBy = 'Current User'; // Replace with actual user
-      employeeData.employee_ModifiedOn = new Date().toISOString();
 
       viewEmployeeDataFetchService
         .updateEmployeeRecord(employeeData)
@@ -189,57 +218,36 @@ angular
           $scope.successMessage = "Employee updated successfully!";
           $scope.showUpdateModal = false;
           $scope.selectedEmployeeRecord = null;
+          $scope.processing = false;
           fetchDataAndRenderGrid(); // Refresh grid
         })
         .catch(function(error) {
-          $scope.errorMessageFromServer = "Failed to update employee. Please try again.";
+          $scope.errorMessageFromServer = error.message || "Failed to update employee. Please try again.";
+          $scope.processing = false;
           console.error("Update employee error:", error);
         });
     };
 
     // Confirm delete employee
     $scope.confirmDeleteEmployee = function() {
+      if ($scope.processing) return;
+      
+      $scope.processing = true;
+      
       viewEmployeeDataFetchService
         .deleteEmployeeRecord($scope.selectedEmployeeRecord.employeeID)
         .then(function(response) {
           $scope.successMessage = "Employee deleted successfully!";
           $scope.showDeleteModal = false;
           $scope.selectedEmployeeRecord = null;
+          $scope.processing = false;
           fetchDataAndRenderGrid(); // Refresh grid
         })
         .catch(function(error) {
-          $scope.errorMessageFromServer = "Failed to delete employee. Please try again.";
+          $scope.errorMessageFromServer = error.message || "Failed to delete employee. Please try again.";
+          $scope.processing = false;
           console.error("Delete employee error:", error);
         });
-    };
-
-    // Validate employee form
-    $scope.validateEmployeeForm = function() {
-      if (!$scope.employeeForm.employee_FirstName || !$scope.employeeForm.employee_FirstName.trim()) {
-        $scope.errorMessageFromServer = "First Name is required.";
-        return false;
-      }
-      if (!$scope.employeeForm.employee_LastName || !$scope.employeeForm.employee_LastName.trim()) {
-        $scope.errorMessageFromServer = "Last Name is required.";
-        return false;
-      }
-      if (!$scope.employeeForm.employee_DateofBirth) {
-        $scope.errorMessageFromServer = "Date of Birth is required.";
-        return false;
-      }
-      if (!$scope.employeeForm.employee_DateofJoining) {
-        $scope.errorMessageFromServer = "Date of Joining is required.";
-        return false;
-      }
-      if (!$scope.employeeForm.employee_Department || !$scope.employeeForm.employee_Department.trim()) {
-        $scope.errorMessageFromServer = "Department is required.";
-        return false;
-      }
-      if (!$scope.employeeForm.employee_Salary || $scope.employeeForm.employee_Salary <= 0) {
-        $scope.errorMessageFromServer = "Valid salary is required.";
-        return false;
-      }
-      return true;
     };
 
     // Close modals
@@ -257,6 +265,15 @@ angular
       $scope.showDeleteModal = false;
       clearMessages();
     };
+
+    // Auto-hide success messages after 5 seconds
+    $scope.$watch('successMessage', function(newVal) {
+      if (newVal) {
+        $timeout(function() {
+          $scope.successMessage = "";
+        }, 5000);
+      }
+    });
 
     // Initialize form on load
     initializeEmployeeForm();
