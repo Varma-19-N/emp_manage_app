@@ -1,0 +1,191 @@
+<div class="container mt-4">
+
+  <!-- Form Header -->
+  <h2 class="text-center mb-4">Employee Save Details</h2>
+
+  <!-- AngularJS Form -->
+  <form name="employeeSaveDetailsForm"
+        class="form-container"
+        ng-submit="submitEmployeeDetailsForm(employeeSaveDetailsForm)"
+        novalidate>
+
+    <!-- === Personal Details Section === -->
+    <h4 class="mb-3">Personal Details</h4>
+
+    <!-- First Name -->
+    <div class="mb-3">
+      <label class="form-label">Employee First Name</label>
+      <input type="text"
+             class="form-control"
+             name="employeeFirstName"
+             ng-model="employee.personalDetails.firstName"
+             required
+             ng-focus="validateFieldsBefore('employeeFirstName')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.employeeFirstName.$touched && employeeSaveDetailsForm.employeeFirstName.$invalid">
+        <span ng-show="employeeSaveDetailsForm.employeeFirstName.$error.required">First Name is mandatory</span>
+      </div>
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-3">
+      <label class="form-label">Employee Last Name</label>
+      <input type="text"
+             class="form-control"
+             name="employeeLastName"
+             ng-model="employee.personalDetails.lastName"
+             required
+             ng-focus="validateFieldsBefore('employeeLastName')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.employeeLastName.$touched && employeeSaveDetailsForm.employeeLastName.$invalid">
+        <span ng-show="employeeSaveDetailsForm.employeeLastName.$error.required">Last Name is mandatory</span>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Employee Email</label>
+      <input type="text" class="form-control" name="employeeEmail" ng-model="employee.personalDetails.email" required
+        ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+        ng-class="{'is-invalid': (employeeSaveDetailsForm.employeeEmail.$touched || employeeSaveDetailsForm.employeeEmail.$dirty) && employeeSaveDetailsForm.employeeEmail.$invalid, 'is-valid': (employeeSaveDetailsForm.employeeEmail.$touched || employeeSaveDetailsForm.employeeEmail.$dirty) && employeeSaveDetailsForm.employeeEmail.$valid}"
+        ng-focus="validateFieldsBefore('employeeEmail')" ng-change="employeeSaveDetailsForm.employeeEmail.$setTouched()" />
+      <div class="error-message"
+        ng-show="employeeSaveDetailsForm.employeeEmail.$touched && employeeSaveDetailsForm.employeeEmail.$invalid">
+        <span ng-show="employeeSaveDetailsForm.employeeEmail.$error.required">Email is mandatory</span>
+        <span ng-show="employeeSaveDetailsForm.employeeEmail.$error.pattern">Enter valid email</span>
+      </div>
+    </div>
+
+    <!-- Date of Birth -->
+    <div class="mb-3">
+      <label class="form-label">Employee Date of Birth</label>
+      <input type="date"
+             class="form-control"
+             name="employeeDob"
+             ng-model="employee.personalDetails.dob"
+             required
+             ng-focus="validateFieldsBefore('employeeDob')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.employeeDob.$touched && employeeSaveDetailsForm.employeeDob.$invalid">
+        <span ng-show="employeeSaveDetailsForm.employeeDob.$error.required">Date of Birth is mandatory</span>
+      </div>
+    </div>
+
+    <!-- Gender Dropdown -->
+    <div class="mb-3">
+      <label class="form-label">Gender</label>
+      <select class="form-select"
+              name="employeeGender"
+              ng-model="employee.personalDetails.gender"
+              required
+              ng-focus="validateFieldsBefore('employeeGender')">
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+      <div class="error-message" ng-show="employeeSaveDetailsForm.employeeGender.$touched && employeeSaveDetailsForm.employeeGender.$invalid">
+        <span ng-show="employeeSaveDetailsForm.employeeGender.$error.required">Gender is mandatory</span>
+      </div>
+    </div>
+
+    <!-- === Address Section === -->
+    <h4 class="mb-3">Address</h4>
+
+    <!-- Street -->
+    <div class="mb-3">
+      <label class="form-label">Street</label>
+      <input type="text"
+             class="form-control"
+             name="street"
+             ng-model="employee.address.street"
+             required
+             ng-focus="validateFieldsBefore('street')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.street.$touched && employeeSaveDetailsForm.street.$invalid">
+        <span ng-show="employeeSaveDetailsForm.street.$error.required">Street is mandatory</span>
+      </div>
+    </div>
+
+    <!-- City -->
+    <div class="mb-3">
+      <label class="form-label">City</label>
+      <input type="text"
+             class="form-control"
+             name="city"
+             ng-model="employee.address.city"
+             required
+             ng-focus="validateFieldsBefore('city')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.city.$touched && employeeSaveDetailsForm.city.$invalid">
+        <span ng-show="employeeSaveDetailsForm.city.$error.required">City is mandatory</span>
+      </div>
+    </div>
+
+    <!-- State -->
+    <div class="mb-3">
+      <label class="form-label">State</label>
+      <input type="text"
+             class="form-control"
+             name="state"
+             ng-model="employee.address.state"
+             required
+             ng-focus="validateFieldsBefore('state')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.state.$touched && employeeSaveDetailsForm.state.$invalid">
+        <span ng-show="employeeSaveDetailsForm.state.$error.required">State is mandatory</span>
+      </div>
+    </div>
+
+    <!-- Country -->
+    <div class="mb-3">
+      <label class="form-label">Country</label>
+      <input type="text"
+             class="form-control"
+             name="country"
+             ng-model="employee.address.country"
+             required
+             ng-focus="validateFieldsBefore('country')" />
+      <div class="error-message" ng-show="employeeSaveDetailsForm.country.$touched && employeeSaveDetailsForm.country.$invalid">
+        <span ng-show="employeeSaveDetailsForm.country.$error.required">Country is mandatory</span>
+      </div>
+    </div>
+
+    <!-- Postal Code -->
+    <div class="mb-3">
+      <label class="form-label">Postal Code</label>
+      <input type="text"
+             class="form-control"
+             name="postalCode"
+             ng-model="employee.address.postalCode"
+             required
+             ng-pattern="/^\d{6}$/"
+             ng-keypress="allowOnlyDigitCharacters($event)"
+             ng-class="{'is-invalid': (employeeSaveDetailsForm.postalCode.$dirty || employeeSaveDetailsForm.$submitted) && employeeSaveDetailsForm.postalCode.$invalid}, {'is-valid': (employeeSaveDetailsForm.postalCode.$dirty || employeeSaveDetailsForm.$submitted) && employeeSaveDetailsForm.postalCode.$valid}"
+             ng-focus="validateFieldsBefore('postalCode')" />
+      <div class="error-message" ng-show="(employeeSaveDetailsForm.postalCode.$dirty || employeeSaveDetailsForm.$submitted) && employeeSaveDetailsForm.postalCode.$invalid">
+        <span ng-show="employeeSaveDetailsForm.postalCode.$error.required">Postal Code is mandatory</span>
+        <span ng-show="employeeSaveDetailsForm.postalCode.$error.pattern">Postal Code must be a 6-digit number</span>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message text-success text-center mt-3" ng-show="successMessageVisible">
+      Form submitted successfully!
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+      <button type="button"
+              class="btn btn-secondary px-4 py-2"
+              style="min-width:150px"
+              ng-click="resetEmployeeDetailsForm()">Clear</button>
+      <button type="submit"
+              class="btn btn-primary px-4 py-2"
+              style="min-width:150px">Save</button>
+    </div>
+
+  </form>
+
+  <!-- Popup Overlay and Data Display -->
+  <div class="overlay" ng-show="employeeDataPopupVisible"></div>
+  <div class="popup" ng-show="employeeDataPopupVisible">
+    <h5>Employee Details</h5>
+    <pre>{{ formattedEmployeeJson }}</pre>
+    <button class="btn btn-primary" ng-click="closePopup()">Close</button>
+  </div>
+</div>

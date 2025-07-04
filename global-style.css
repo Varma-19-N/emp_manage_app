@@ -1,0 +1,53 @@
+/* Styles for the overall page layout */
+html, body {
+  height: 100%; /* Make the entire page take up the full height of the viewport */
+  margin: 0; /* Remove default margins */
+  font-family: 'Segoe UI', sans-serif; /* Set the default font for the page */
+}
+
+/* Styles for the sidebar */
+.sidebar {
+  width: 20rem; /* Set the width of the sidebar */
+  min-height: 100vh; /* Ensure the sidebar takes up the full height of the viewport */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Add a subtle shadow to the right of the sidebar */
+  padding: 1.5rem 1rem; /* Add some padding inside the sidebar */
+}
+
+/* Styles for the title in the sidebar */
+.sidebar h4 {
+  font-size: 1.5rem; /* Increase the font size for the title */
+  padding-bottom: 1rem; /* Add space below the title */
+  border-bottom: 1px solid rgba(255,255,255,0.2); /* Add a light border below the title */
+}
+
+/* Default styles for links in the sidebar */
+.sidebar .nav-link {
+  padding: 10px 15px; /* Add padding around the text in the links */
+  border-radius: 8px; /* Round the corners of the links */
+  color: #ffffff; /* Set the text color to white */
+  transition: background-color 0.2s, color 0.2s; /* Smooth transition for background and text color changes */
+}
+
+/* Hover effect for sidebar links */
+.sidebar .nav-link:hover {
+  background-color: rgba(255,255,255,0.1); /* Light background on hover */
+}
+
+/* Styles for the active link in the sidebar */
+.sidebar .nav-link.active-link {
+  background-color: #ffffff; /* White background for the active link */
+  color: #000000 !important; /* Black text for the active link */
+  font-weight: 600; /* Make the text bold */
+  box-shadow: 0 0 10px rgba(0,0,0,0.15); /* Add a subtle shadow around the active link */
+}
+
+/* Styles for the main content area */
+main {
+  background-color: #f5f5f5; /* Light gray background for the main content area */
+  min-height: 100vh; /* Ensure the main content area takes up the full height of the viewport */
+}
+
+/* Styles for containers inside the main content area */
+main .container {
+  padding: 2rem; /* Add padding inside containers within the main content area */
+}

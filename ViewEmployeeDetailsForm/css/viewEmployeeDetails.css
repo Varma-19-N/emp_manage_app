@@ -1,0 +1,121 @@
+/* === View Employee Details Grid Page Styling === */
+
+/* Container adjustments for responsiveness */
+.container-fluid {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Heading style */
+h4.fw-semibold {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Error message alert box */
+.alert-danger {
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* AG Grid container */
+.ag-theme-alpine {
+  height: 600px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* Header Label - prevent wrapping, ensure full visibility */
+.ag-header-cell-label {
+  white-space: nowrap;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #000000;
+}
+
+/* Header Cell - avoid clipping and add borders */
+.ag-header-cell {
+  white-space: nowrap;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  border-right: 1px solid #ddd;
+  border-bottom: 2px solid #333;
+}
+
+/* Header Row - bottom border for strong visual separation */
+.ag-header {
+  border-bottom: 2px solid #333;
+}
+
+/* Grid cell styling */
+.ag-cell {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Full row hover styling */
+.ag-theme-alpine .ag-row .ag-cell {
+  background-color: rgb(227, 243, 248);
+}
+
+.ag-theme-alpine .ag-row:nth-child(even) .ag-cell {
+  background-color: #f9f9f9;
+}
+
+.ag-theme-alpine .ag-row:hover .ag-cell {
+  background-color: #f0f4f8; /* Soft gray-blue hover */
+}
+
+
+/* Row styling - horizontal lines between rows */
+.ag-row {
+  border-bottom: 1px solid #ddd;
+}
+
+/* Ensure consistent border application in Alpine theme */
+.ag-theme-alpine .ag-cell,
+.ag-theme-alpine .ag-header-cell {
+  border-right: 1px solid #ddd !important;
+  border-bottom: 1px solid #ddd !important;
+}
+
+.ag-theme-alpine .ag-header-cell {
+    background-color: #34495e; /* Navy blue-gray */
+    color: #ffffff;
+}
+
+
+/* Responsive improvements for smaller devices */
+@media (max-width: 768px) {
+  .ag-theme-alpine {
+    height: 500px;
+    font-size: 0.85rem;
+  }
+
+  h4.fw-semibold {
+    font-size: 1.25rem;
+  }
+
+  .alert-danger {
+    font-size: 0.95rem;
+  }
+
+  /* Optional: Adjust header font size for readability */
+  .ag-header-cell-label {
+    font-size: 0.9rem;
+  }
+}

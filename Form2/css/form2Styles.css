@@ -1,0 +1,73 @@
+.greeting-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.greeting-header {
+  text-align: center;
+  padding: 1rem;
+  background: #343a40;
+  color: white;
+  border-radius: 5px;
+}
+
+.greeting-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.greeting-header p {
+  margin: 0.5rem 0 0;
+}
+
+.input-section {
+  margin: 1rem 0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.greeting-display {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.greeting-text {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.clear-section {
+  text-align: center;
+}
+
+.btn-clear {
+  padding: 0.5rem 1rem;
+  background: #4e5257;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-clear:hover {
+  background: #343a40;
+}

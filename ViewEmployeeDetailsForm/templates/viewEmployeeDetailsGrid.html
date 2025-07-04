@@ -1,0 +1,18 @@
+<!-- Main container for the employee details view -->
+<div class="container-fluid px-0">
+  <!-- Page title -->
+  <h4 class="mb-3 text-center">View All Employee Details</h4>
+
+  <!-- Action Buttons -->
+  <div class="d-flex gap-2 mb-3">
+    <button class="btn btn-success" ng-click="addNewEmployeeRecord()">Add</button>
+    <button class="btn btn-warning" ng-click="updateSelectedEmployeeRecord()"
+      ng-disabled="!selectedEmployeeRecord">Update</button>
+    <button class="btn btn-danger" ng-click="deleteSelectedEmployeeRecord()"
+      ng-disabled="!selectedEmployeeRecord">Delete</button>
+  </div>
+
+  <!-- AG Grid container where employee data will be displayed once loaded -->
+  <div id="employeeGrid" class="ag-theme-alpine" ng-show="!loading"></div>
+
+</div>

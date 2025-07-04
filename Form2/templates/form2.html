@@ -1,0 +1,36 @@
+<div class="greeting-container">
+  
+  <!-- Header -->
+  <div class="greeting-header">
+    <h2>Personal Greeting</h2>
+    <p>Enter your name to receive a personalized welcome</p>
+  </div>
+
+  <!-- Input Section -->
+  <div class="input-section">
+    <div class="form-group">
+      <label for="userName">Your Name</label>
+      <input type="text" 
+             id="userName"
+             class="form-control" 
+             ng-model="greetingData.userName"
+             placeholder="Enter your name..."
+             maxlength="50">
+    </div>
+  </div>
+
+  <!-- Greeting Display -->
+  <div class="greeting-display" ng-show="greetingData.showGreeting && currentGreeting">
+    <p class="greeting-text">{{ currentGreeting }}</p>
+  </div>
+
+  <!-- Clear Button -->
+  <div class="clear-section" ng-show="greetingData.showGreeting">
+    <button type="button" 
+            class="btn-clear"
+            ng-click="clearForm()">
+      Clear
+    </button>
+  </div>
+
+</div>
