@@ -3,16 +3,194 @@
   <!-- Page title -->
   <h4 class="mb-3 text-center">View All Employee Details</h4>
 
+  <!-- Success Message -->
+  <div class="alert alert-success" ng-show="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger" ng-show="errorMessageFromServer">
+    {{ errorMessageFromServer }}
+  </div>
+
   <!-- Action Buttons -->
   <div class="d-flex gap-2 mb-3">
-    <button class="btn btn-success" ng-click="addNewEmployeeRecord()">Add</button>
+    <button class="btn btn-success" ng-click="addNewEmployeeRecord()">
+      <i class="fas fa-plus"></i> Add
+    </button>
     <button class="btn btn-warning" ng-click="updateSelectedEmployeeRecord()"
-      ng-disabled="!selectedEmployeeRecord">Update</button>
+      ng-disabled="!selectedEmployeeRecord">
+      <i class="fas fa-edit"></i> Update
+    </button>
     <button class="btn btn-danger" ng-click="deleteSelectedEmployeeRecord()"
-      ng-disabled="!selectedEmployeeRecord">Delete</button>
+      ng-disabled="!selectedEmployeeRecord">
+      <i class="fas fa-trash"></i> Delete
+    </button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="text-center" ng-show="loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading employee data...</p>
   </div>
 
   <!-- AG Grid container where employee data will be displayed once loaded -->
   <div id="employeeGrid" class="ag-theme-alpine" ng-show="!loading"></div>
 
+  <!-- Add Employee Modal -->
+  <div class="modal-overlay" ng-show="showAddModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Employee</h5>
+          <button type="button" class="btn-close" ng-click="closeAddModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form name="addEmployeeForm" novalidate>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">First Name *</label>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_FirstName" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Last Name *</label>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_LastName" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date of Birth *</label>
+                <input type="date" class="form-control" ng-model="employeeForm.employee_DateofBirth" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date of Joining *</label>
+                <input type="date" class="form-control" ng-model="employeeForm.employee_DateofJoining" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Department *</label>
+                <select class="form-select" ng-model="employeeForm.employee_Department" required>
+                  <option value="">Select Department</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Salary *</label>
+                <input type="number" class="form-control" ng-model="employeeForm.employee_Salary" min="0" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" ng-model="employeeForm.employee_InActive">
+                <label class="form-check-label">Inactive</label>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" ng-click="closeAddModal()">Cancel</button>
+          <button type="button" class="btn btn-success" ng-click="saveNewEmployee()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Employee Modal -->
+  <div class="modal-overlay" ng-show="showUpdateModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Employee</h5>
+          <button type="button" class="btn-close" ng-click="closeUpdateModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form name="updateEmployeeForm" novalidate>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Employee ID</label>
+                <input type="text" class="form-control" ng-model="employeeForm.employeeID" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">First Name *</label>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_FirstName" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Last Name *</label>
+                <input type="text" class="form-control" ng-model="employeeForm.employee_LastName" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date of Birth *</label>
+                <input type="date" class="form-control" ng-model="employeeForm.employee_DateofBirth" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date of Joining *</label>
+                <input type="date" class="form-control" ng-model="employeeForm.employee_DateofJoining" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Department *</label>
+                <select class="form-select" ng-model="employeeForm.employee_Department" required>
+                  <option value="">Select Department</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Salary *</label>
+                <input type="number" class="form-control" ng-model="employeeForm.employee_Salary" min="0" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" ng-model="employeeForm.employee_InActive">
+                <label class="form-check-label">Inactive</label>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" ng-click="closeUpdateModal()">Cancel</button>
+          <button type="button" class="btn btn-warning" ng-click="updateEmployee()">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" ng-show="showDeleteModal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" ng-click="closeDeleteModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this employee record?</p>
+          <div class="employee-info" ng-if="selectedEmployeeRecord">
+            <strong>{{ selectedEmployeeRecord.employee_FirstName }} {{ selectedEmployeeRecord.employee_LastName }}</strong><br>
+            <small class="text-muted">ID: {{ selectedEmployeeRecord.employeeID }}</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" ng-click="closeDeleteModal()">Cancel</button>
+          <button type="button" class="btn btn-danger" ng-click="confirmDeleteEmployee()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
